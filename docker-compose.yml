@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: parcial_db
+    environment:
+      POSTGRES_USER: parcial
+      POSTGRES_PASSWORD: parcial123
+      POSTGRES_DB: parcial_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - datos:/var/lib/postgresql/data
+
+volumes:
+  datos:

@@ -1,0 +1,24 @@
+-- =====================================================================
+-- poblar.sql: datos de prueba para la base del parcial
+-- =====================================================================
+-- Las TABLAS las crea TypeORM (synchronize: true). Aquí solo van INSERT.
+--
+-- Cómo ejecutarlo (con Docker arriba y Nest arrancado al menos una vez):
+--   docker exec -i parcial_db psql -U parcial -d parcial_db < db/poblar.sql
+--
+-- Para empezar de cero:
+--   docker compose down -v && docker compose up -d
+--   npm run start:dev      (recrea las tablas vacías)
+--   docker exec -i parcial_db psql -U parcial -d parcial_db < db/poblar.sql
+--
+-- Recordatorios:
+--   - @Entity() sin nombre -> la tabla se llama como la clase en minúscula.
+--   - Columnas en camelCase van entre comillas dobles: "dealershipId".
+--   - Inserta primero las tablas "padre" y luego las que tienen llave foránea.
+-- =====================================================================
+
+
+-- Ejemplo (borrar y reemplazar con tus tablas):
+-- INSERT INTO tabla (columna1, columna2) VALUES
+--   ('valor1', 'valor2'),
+--   ('valor3', 'valor4');
