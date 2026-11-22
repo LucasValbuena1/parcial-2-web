@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthenticationModule, type Duration } from '@nestjs/authentication';
+import { AuthorizationModule } from '@nestjs/authorization';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { UsersModule } from './users/users.module.js';
+import { RolesModule } from './roles/roles.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -27,12 +32,37 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         host: config.get<string>('DB_HOST'),
         port: Number(config.get('DB_PORT')),
         username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASSWORD'),
+        password: config.get<string>('DB_PASS'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true, // registra las entidades de cada forFeature()
         synchronize: true, // crea las tablas a partir de las entidades
       }),
     }),
+    // Autenticación con JWT. Con solo importarlo queda activo un guard global:
+    // toda ruta pide token, salvo las marcadas con @Public().
+    AuthenticationModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        accessToken: {
+          key: config.getOrThrow<string>('JWT_SECRET'),
+          issuer: 'parcial-api',
+          audience: 'parcial-clients',
+          ttl: config.getOrThrow<Duration>('JWT_EXPIRES_IN'), // '2m' -> expiresIn: 120
+        },
+        refreshToken: {
+          ttl: config.getOrThrow<Duration>('JWT_REFRESH_EXPIRES_IN'), // '7d'
+          absoluteTtl: '30d', // duración máxima de la familia, aunque rote
+        },
+        allowInMemoryStorage: true, // refresh tokens en memoria (permitido por el enunciado)
+      }),
+    }),
+    // Autorización con policies. Va DESPUÉS de AuthenticationModule porque
+    // necesita saber quién es el usuario. Desde aquí, toda ruta necesita
+    // @Can(), @Can.Anyone() o @Public(); si no tiene ninguno -> 403.
+    AuthorizationModule.forRoot(),
+    UsersModule,
+    RolesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
