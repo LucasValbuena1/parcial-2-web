@@ -1,4 +1,6 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { PasswordHasher } from '@nestjs/authentication';
@@ -67,8 +69,20 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return `This action returns all users`;
+  // GET /users -> 200 [{ id, email, name, roles }] · 500 si falla la consulta
+  // roles sale como lista de nombres: ["admin", "user"]
+  async findAll() {
+    try {
+      const users = await this.users.find({ relations: { roles: true }, order: { email: 'ASC' } });
+      return users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        roles: user.roles.map((rol) => rol.role_name),
+      }));
+    } catch {
+      throw new InternalServerErrorException('Error al listar usuarios');
+    }
   }
 
   findOne(id: number) {

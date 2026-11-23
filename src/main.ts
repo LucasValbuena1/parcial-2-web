@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule, ObserveInstrument } from './app.module.js';
+import { revisarTablas } from './revisar-tablas.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,5 +17,7 @@ async function bootstrap() {
     }),
   );
   await app.listen(process.env.PORT ?? 3000);
+  // Imprime qué tablas hay en la base (ver src/revisar-tablas.ts)
+  await revisarTablas(app);
 }
 await bootstrap();

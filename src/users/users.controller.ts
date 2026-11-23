@@ -42,8 +42,15 @@ export class UsersController {
   // @Can.Anyone(): cualquier usuario con token ve SU propio perfil
   @Can.Anyone()
   @Get('me')
+  // Responde solo lo que pide el enunciado: { id, email, name, phone, roles }
   me(@CurrentUser() user: User) {
-    return user;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      phone: user.phone,
+      roles: user.roles.map((rol) => rol.role_name),
+    };
   }
 
   @Can(UserPolicy, 'view')
