@@ -18,13 +18,9 @@ export class ReservationsController {
     return this.reservationsService.findAll();
   }
 
-  @Get(':id')
-  @Can.Anyone()
-  findOne(@Param('id') id: string) {
-    return this.reservationsService.findOne(+id);
-  }
-
+  
   @Patch(':id')
+  @Can.Anyone()
   update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
     return this.reservationsService.update(+id, updateReservationDto);
   }
