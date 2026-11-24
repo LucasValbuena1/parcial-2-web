@@ -15,11 +15,5 @@ export class ParkingSpotsController {
     return this.parkingSpotsService.create(createParkingSpotDto);
   }
 
-  @Get()
-  @Can.Anyone()
-  findAll() {
-    return this.parkingSpotsService.findAll();
-  }
-
   
 }
