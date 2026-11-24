@@ -9,6 +9,8 @@ import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { ReservationsModule } from './reservations/reservations.module.js';
+import { ParkingSpotsModule } from './parking-spots/parking-spots.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -63,6 +65,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     UsersModule,
     RolesModule,
     AuthModule,
+    ReservationsModule,
+    ParkingSpotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
